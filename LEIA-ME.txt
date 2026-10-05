@@ -16,7 +16,10 @@ config.js: conteúdo editável, contato e listas de arquivos.
 assets: imagens, fontes locais e vídeos em MP4.
 
 DESIGN
-Logo original inteiro, com proporções preservadas. O movimento usa uma única imagem:
+Logo transparente fornecido pelo cliente, com proporções preservadas.
+assets/images/logo-fornecido.png mantém o arquivo anexo intacto.
+logo.svg incorpora esses mesmos pixels e remove apenas a margem transparente da exibição.
+O movimento usa uma única imagem:
 do centro da abertura para a posição calculada no cabeçalho, reversível ao rolar.
 Fontes do site original: Montserrat e Brooke Smith Script, armazenadas localmente.
 Branco/off-white, detalhes dourados, marrom limitado à marca e à tipografia.
@@ -85,12 +88,23 @@ Substituir o retrato e adicionar fotos atuais do espaço e certificados aprovado
 Revisar textos e detalhes comerciais da mentoria.
 Confirmar tratamentos ortodônticos antes de listar serviços específicos.
 Confirmar direitos de uso dos vídeos fornecidos pelo cliente.
-O arquivo de logo obtido no site original tem 145 x 126 pixels. Sua proporção foi
-preservada, mas para máxima nitidez na abertura use o original em SVG ou PNG maior:
-basta substituir assets/images/logo.png sem alterar o desenho ou a proporção.
+O logo anexado substitui o arquivo de baixa resolução da primeira versão.
+A imagem não foi redesenhada e suas proporções foram preservadas.
 
 VERIFICAÇÃO
 Sintaxe de JavaScript e referências locais verificadas; vídeos transcodificados
 para MP4 H.264 sem áudio, imagens e fontes incluídas no pacote.
 A inspeção visual em navegador não estava disponível neste ambiente.
 Revise a reprodução e os enquadramentos no desktop e no celular antes da publicação.
+
+ATUALIZAÇÃO DE RESPONSIVIDADE
+Conteúdo limitado a 1240 pixels e navegação a 1440 pixels, centralizados.
+Texto principal em 16 pixels; navegação em 12 pixels; textos de ação em 14 pixels.
+Menu recolhido em telas de até 1024 pixels. Ao abrir, o logo ocupa o cabeçalho
+e a rolagem do fundo é bloqueada; os links ficam livres de sobreposição.
+Até 760 pixels: seções em uma coluna e três publicações do Instagram empilhadas.
+Abertura com altura svh, composição central e ajustes para telas de pouca altura.
+Contagem dos vídeos removida. O controle de pausa foi preservado.
+Posição do logo recalculada ao redimensionar a janela e a área visível no celular.
+Verificados sintaxe, referências, estrutura e cálculos da transformação do logo.
+A revisão visual em navegador ainda precisa ser feita nos aparelhos de destino.

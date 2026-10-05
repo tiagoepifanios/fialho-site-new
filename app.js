@@ -6,11 +6,12 @@
   const menu = document.querySelector('.menu-toggle');
   const nav = document.querySelector('#navigation');
   document.documentElement.classList.add('js');
-  const closeMenu = () => { header.classList.remove('menu-open'); menu.setAttribute('aria-expanded', 'false'); };
-  menu.addEventListener('click', () => { const open = menu.getAttribute('aria-expanded') !== 'true'; header.classList.toggle('menu-open', open); menu.setAttribute('aria-expanded', String(open)); });
+  let refreshLogo = () => {};
+  const closeMenu = () => { header.classList.remove('menu-open'); menu.setAttribute('aria-expanded', 'false'); document.documentElement.classList.remove('menu-is-open'); refreshLogo(); };
+  menu.addEventListener('click', () => { const open = menu.getAttribute('aria-expanded') !== 'true'; header.classList.toggle('menu-open', open); menu.setAttribute('aria-expanded', String(open)); document.documentElement.classList.toggle('menu-is-open',open); refreshLogo(); });
   nav.addEventListener('click', e => { if (e.target.closest('a')) closeMenu(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); menu.focus(); } });
-  window.addEventListener('resize', () => { if (innerWidth > 760) closeMenu(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && header.classList.contains('menu-open')) { closeMenu(); menu.focus(); } });
+  window.addEventListener('resize', () => { if (innerWidth > 1024) closeMenu(); });
   document.querySelectorAll('[data-year]').forEach(el => el.textContent = new Date().getFullYear());
   const email = document.querySelector('#contact-email');
   if (email && c.email) { email.textContent = c.email; email.href = 'mailto:' + c.email; }
@@ -34,35 +35,47 @@
     const target = document.querySelector('.logo-destination');
     const copy = document.querySelector('.hero-copy');
     const cue = document.querySelector('.scroll-cue');
+    const origin = document.querySelector('.hero-logo-slot');
     let geometry, pending = false;
-    const measure = () => {
-      logo.style.transform = 'none';
-      const start = logo.getBoundingClientRect(); const end = target.getBoundingClientRect();
-      geometry = { x: end.left - start.left, y: end.top - start.top, scale: end.width / start.width, length: hero.offsetHeight * .72 };
-      update();
-    };
     const update = () => {
       if (!geometry) return;
       const progress = Math.min(1, Math.max(0, scrollY / geometry.length));
       const ease = progress * progress * (3 - 2 * progress);
-      const t = reduced.matches ? (progress > .15 ? 1 : 0) : ease;
-      logo.style.transform = `translate3d(${geometry.x*t}px,${geometry.y*t}px,0) scale(${1 + (geometry.scale-1)*t})`;
-      copy.style.opacity = String(Math.max(0, 1 - progress * 2.2));
-      cue.style.opacity = String(Math.max(0, 1 - progress * 4));
-      header.classList.toggle('solid', progress > .35);
+      const menuOpen = header.classList.contains('menu-open');
+      const t = menuOpen ? 1 : reduced.matches ? (progress > .15 ? 1 : 0) : ease;
+      const x = geometry.startX + (geometry.endX - geometry.startX) * t;
+      const y = geometry.startY + (geometry.endY - geometry.startY) * t;
+      const width = geometry.startW + (geometry.endW - geometry.startW) * t;
+      logo.style.width = geometry.startW + 'px';
+      logo.style.transform = `translate3d(${x}px,${y}px,0) scale(${width / geometry.startW})`;
+      logo.style.opacity = '1';
+      copy.style.opacity = String(menuOpen ? 0 : Math.max(0, 1 - progress * 2.5));
+      cue.style.opacity = String(menuOpen ? 0 : Math.max(0, 1 - progress * 4));
+      copy.style.visibility = progress > .5 || menuOpen ? 'hidden' : 'visible';
+      cue.style.visibility = progress > .25 || menuOpen ? 'hidden' : 'visible';
+      header.classList.toggle('solid', progress > .25);
       pending = false;
     };
+    const measure = () => {
+      const start = origin.getBoundingClientRect(), end = target.getBoundingClientRect();
+      geometry = {startX:start.left, startY:start.top+scrollY, startW:start.width,
+        endX:end.left,endY:end.top,endW:end.width,length:Math.max(220,hero.offsetHeight*.64)};
+      update();
+    };
+    refreshLogo = update;
     window.addEventListener('scroll', () => { if (!pending) { requestAnimationFrame(update); pending = true; } }, {passive:true});
-    window.addEventListener('resize', measure); reduced.addEventListener('change', measure);
+    window.addEventListener('resize', measure);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize',measure);
+    reduced.addEventListener('change',measure);
     document.fonts.ready.then(measure); measure();
     document.documentElement.style.setProperty('--wash', String(Math.min(.7,Math.max(.15,Number(c.videoOverlay) || .38))));
     const players = [...document.querySelectorAll('.hero-video')];
     const files = (c.videos || []).filter(Boolean); const toggle = document.querySelector('.video-toggle');
-    const index = document.querySelector('.hero-index');
+
     let current = 0, slot = 0, changing = false, userPaused = false, failed = new Set(), outside = false;
     const load = (player, i) => { player.src = files[i]; player.dataset.index = String(i); player.load(); player.playbackRate = c.videoSpeed || .8; };
     const play = player => player.play().catch(() => { toggle.textContent = '▶'; toggle.setAttribute('aria-label', 'Reproduzir vídeos'); });
-    const setIndex = () => index.textContent = String(current+1).padStart(2,'0') + ' — ' + String(files.length).padStart(2,'0');
+
     const prepareNext = () => { if (files.length < 2) return; const next = (current+1)%files.length; if (players[1-slot].dataset.index !== String(next)) load(players[1-slot], next); };
     const advance = () => {
       if (changing || userPaused || outside || reduced.matches || files.length < 2 || failed.size >= files.length) return;
@@ -74,7 +87,7 @@
         next.currentTime = 0; next.playbackRate = c.videoSpeed || .8;
         next.play().then(() => {
           next.classList.add('visible'); previous.classList.remove('visible');
-          slot = nextSlot; current = nextIndex; setIndex();
+          slot = nextSlot; current = nextIndex;
           setTimeout(() => { previous.pause(); changing = false; prepareNext(); }, 1250);
         }).catch(() => { changing = false; toggle.textContent = '▶'; toggle.setAttribute('aria-label','Reproduzir vídeos'); });
       };
@@ -91,10 +104,10 @@
       player.addEventListener('error', () => {
         failed.add(player.dataset.index); changing = false;
         if (failed.size >= files.length) { players.forEach(p => p.classList.remove('visible')); toggle.hidden = true; return; }
-        if (player === players[slot]) { current = (current+1)%files.length; load(player,current); if(!userPaused&&!outside&&!reduced.matches) play(player); setIndex(); }
+        if (player === players[slot]) { current = (current+1)%files.length; load(player,current); if(!userPaused&&!outside&&!reduced.matches) play(player); }
       });
     });
-    if (files.length && !reduced.matches) { load(players[0],0); play(players[0]); setIndex(); }
+    if (files.length && !reduced.matches) { load(players[0],0); play(players[0]); }
     else { players.forEach(p=>p.hidden=true); toggle.hidden=true; }
     toggle.addEventListener('click', () => {
       const player = players[slot]; userPaused = !player.paused;
