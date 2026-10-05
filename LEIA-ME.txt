@@ -1,0 +1,96 @@
+FIALHO ODONTOLOGIA — SITE INSTITUCIONAL
+
+COMO ABRIR
+Extraia toda a pasta e abra index.html no navegador. Não abra o HTML de dentro do ZIP.
+HTML, CSS e JavaScript puros: nenhuma instalação, npm, compilação ou assinatura necessária.
+Para um servidor local opcional: python -m http.server 8080
+Depois acesse http://localhost:8080
+Para hospedar: envie todo o conteúdo desta pasta para a raiz da hospedagem.
+
+ESTRUTURA
+index.html: seis blocos (vídeos, Dr. Tiago, formação/certificados, espaço, Instagram, contato).
+ortodontia.html e mentoria.html: únicas páginas independentes.
+styles.css: visual, proporções, dourado e responsividade.
+app.js: logo acompanhando a rolagem, vídeos, menu, galerias e feed.
+config.js: conteúdo editável, contato e listas de arquivos.
+assets: imagens, fontes locais e vídeos em MP4.
+
+DESIGN
+Logo original inteiro, com proporções preservadas. O movimento usa uma única imagem:
+do centro da abertura para a posição calculada no cabeçalho, reversível ao rolar.
+Fontes do site original: Montserrat e Brooke Smith Script, armazenadas localmente.
+Branco/off-white, detalhes dourados, marrom limitado à marca e à tipografia.
+Quatro vídeos disponíveis nesta entrega: 1.mov, 2.mp4, 3.mp4 e 5.mov.
+O arquivo 6.mov não pôde ser recuperado. Para adicioná-lo, converta-o em MP4 H.264,
+copie para assets/videos/ e acrescente o caminho na lista videos de config.js.
+Vídeos ilustrativos a 0,8x, camada branca de 38%, transição de 1,2 segundo.
+O player carrega o vídeo atual e prepara o seguinte, com opção de pausa.
+Preferência por movimento reduzido: imagem de capa estática e logo sem deslocamento contínuo.
+
+EDITAR CONTATO
+Em config.js, confirme email e preencha whatsapp no formato 55 + DDD + número.
+O WhatsApp usa 55 54 99676-1919, recuperado do site antigo. Confirme antes de publicar.
+Caso esvazie whatsapp, o botão flutuante é ocultado e os contatos passam a abrir e-mail.
+O e-mail vem do site antigo e precisa ser confirmado antes de publicar.
+O endereço antigo não foi utilizado. Preencha address apenas após confirmação.
+Não há formulário que simule envio: os links de e-mail abrem o aplicativo de e-mail.
+
+FOTOGRAFIAS
+O retrato real do Dr. Tiago foi recuperado do site antigo; é provisório e contém
+referências visuais ao espaço anterior. Substitua assets/images/dr-tiago.jpg pelo novo retrato.
+O bloco do espaço não usa fotos da clínica antiga. Para inserir fotos atuais:
+1. Copie os arquivos para assets/images/.
+2. Em config.js, preencha spacePhotos, por exemplo:
+   spacePhotos: [
+     { image: 'assets/images/espaco-01.jpg', alt: 'Recepção do espaço atual' },
+     { image: 'assets/images/espaco-02.jpg', alt: 'Sala de atendimento' }
+   ]
+A composição fotográfica aparece automaticamente ao preencher a lista.
+
+CERTIFICADOS
+O doutorado na USP/Bauru foi incluído conforme o briefing.
+Nenhum diploma, ano, registro profissional ou título adicional foi inventado.
+Para inserir certificados reais em config.js:
+certificates: [
+  { image: 'assets/images/certificado-01.jpg', title: 'Título confirmado',
+    description: 'Instituição e ano confirmados' }
+]
+Os certificados abrem a imagem em uma nova aba.
+O texto provisório desaparece automaticamente quando existirem certificados.
+
+INSTAGRAM — SEM LOGIN NESTA ETAPA
+Não há conexão com a conta, API, scraping, solicitação de senha ou token.
+As três peças atuais são chamadas editoriais para o perfil, não publicações fictícias.
+Para substituir por até três publicações reais, edite instagram.posts:
+posts: [
+  { image: 'assets/images/post-01.jpg', url: 'https://www.instagram.com/p/ID_REAL/',
+    alt: 'Descrição do conteúdo', date: '2026-10-05', type: 'image' }
+]
+Tipos: image, video, carousel. Os posts são ordenados pela data, mostrando no máximo três.
+Imagens ficam inteiras, sem cortar textos. Cada peça abre o post original.
+
+INTEGRAÇÃO FUTURA
+instagram.endpoint está vazio: nenhuma requisição é executada.
+Há um ponto de extensão para endpoint NO MESMO DOMÍNIO do site.
+Exemplo: endpoint: '/api/instagram'
+O endpoint deverá retornar JSON: { "posts": [ {"image":"https://...", "url":"https://www.instagram.com/p/.../", "alt":"...", "date":"2026-10-05", "type":"image"} ] }
+Será necessário implementar esse backend, autorização oficial, armazenamento de
+credenciais no servidor, cache e renovação da conexão. Esta entrega não inclui
+um backend ou integração já autorizada. Nunca coloque tokens em config.js.
+Falha no endpoint conserva as publicações manuais/chamadas para o perfil.
+
+ANTES DE PUBLICAR
+Confirmar e-mail, WhatsApp, endereço atual e identificação profissional/CRO.
+Substituir o retrato e adicionar fotos atuais do espaço e certificados aprovados.
+Revisar textos e detalhes comerciais da mentoria.
+Confirmar tratamentos ortodônticos antes de listar serviços específicos.
+Confirmar direitos de uso dos vídeos fornecidos pelo cliente.
+O arquivo de logo obtido no site original tem 145 x 126 pixels. Sua proporção foi
+preservada, mas para máxima nitidez na abertura use o original em SVG ou PNG maior:
+basta substituir assets/images/logo.png sem alterar o desenho ou a proporção.
+
+VERIFICAÇÃO
+Sintaxe de JavaScript e referências locais verificadas; vídeos transcodificados
+para MP4 H.264 sem áudio, imagens e fontes incluídas no pacote.
+A inspeção visual em navegador não estava disponível neste ambiente.
+Revise a reprodução e os enquadramentos no desktop e no celular antes da publicação.
